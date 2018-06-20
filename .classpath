@@ -28,5 +28,5 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/urmusic5-core/libs/joml/joml-1.9.3-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path=""/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
