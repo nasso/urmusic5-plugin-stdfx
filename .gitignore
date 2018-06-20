@@ -1,0 +1,11 @@
+bin/*
+.settings/*
+ignore/*
+
+*.war
+*.ear
+*.log
+
+hs_err_pid*
+/bin/
+Thumbs.db
