@@ -17,34 +17,14 @@
  * 
  * Contact "nasso": nassomails -at- gmail dot com
  ******************************************************************************/
-package io.gitlab.nasso.urmusic.plugin.standardfxlibrary;
+#version 330 core
 
-import io.gitlab.nasso.urmusic.model.project.VideoEffect;
-import io.gitlab.nasso.urmusic.plugin.UrmPlugin;
+in vec2 position_quad;
 
-public class Main implements UrmPlugin {
-	private static final VideoEffect[] EFFECTS = {
-		// Basics
-		new ImageDisplayVFX(),
-		new CircleMaskVFX(),
-		new RectangleMaskVFX(),
-		new AffineTransformVFX(),
-		new PolarCoordsVFX(),
-		new MirrorVFX(),
-		new GaussianBlurVFX(),
-		
-		// Audio
-		new AudioScopeVFX(),
-		new AudioSpectrumVFX(),
-	};
+out vec2 pass_quad_uv;
+
+void main() {
+	pass_quad_uv = position_quad * 0.5 + 0.5;
 	
-	public VideoEffect[] getEffects() {
-		return EFFECTS;
-	}
-	
-	public void pluginInit() {
-	}
-	
-	public void pluginDispose() {
-	}
+	gl_Position = vec4(position_quad, 0.0, 1.0);
 }

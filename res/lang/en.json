@@ -283,20 +283,38 @@
 		},
 		
 		"mirror": {
-				"name": "Mirror",
-				"param": {
-					"edge0": {
-						"name": "Edge 1"
-					},
-					
-					"edge1": {
-						"name": "Edge 2"
-					},
-					
-					"invert": {
-						"name": "Invert"
-					}
+			"name": "Mirror",
+			"param": {
+				"edge0": {
+					"name": "Edge 1"
+				},
+				
+				"edge1": {
+					"name": "Edge 2"
+				},
+				
+				"invert": {
+					"name": "Invert"
 				}
 			}
+		},
+		
+		"gaussian_blur": {
+			"name": "Gaussian Blur",
+			"param": {
+				"direction": {
+					"name": "Direction",
+					"option": {
+						"both": "Both",
+						"horizontal": "Horizontal",
+						"vertical": "Vertical"
+					}
+				},
+				
+				"radius": {
+					"name": "Radius"
+				}
+			}
+		}
 	}
 }
