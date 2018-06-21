@@ -23,14 +23,12 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import io.gitlab.nasso.urmusic.common.BoolValue;
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
-import io.gitlab.nasso.urmusic.model.project.VideoEffectInstance;
 import io.gitlab.nasso.urmusic.model.project.param.BooleanParam;
 import io.gitlab.nasso.urmusic.model.renderer.video.NGLUtils;
 
-public class PolarCoordsVFX extends TrackEffect implements VideoEffect {
+public class PolarCoordsVFX extends VideoEffect {
 	private static final String PNAME_polarToRect = "polarToRect";
 	
 	private NGLUtils glu = new NGLUtils("polar coords global", PolarCoordsVFX.class.getClassLoader());
@@ -38,7 +36,7 @@ public class PolarCoordsVFX extends TrackEffect implements VideoEffect {
 	private int prog, quadVAO;
 	private int loc_inputTex, loc_aspectRatio, loc_modePolarToRect;
 	
-	private class PolarCoordsVFXInstance extends TrackEffectInstance implements VideoEffectInstance {
+	private class PolarCoordsVFXInstance extends VideoEffectInstance {
 		public void setupParameters() {
 			this.addParameter(new BooleanParam(PNAME_polarToRect, BoolValue.FALSE));
 		}
@@ -64,7 +62,7 @@ public class PolarCoordsVFX extends TrackEffect implements VideoEffect {
 		
 	}
 	
-	public TrackEffectInstance instance() {
+	public VideoEffectInstance instance() {
 		return new PolarCoordsVFXInstance();
 	}
 

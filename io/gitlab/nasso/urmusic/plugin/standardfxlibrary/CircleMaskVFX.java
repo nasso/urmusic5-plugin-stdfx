@@ -26,10 +26,8 @@ import com.jogamp.opengl.GL3;
 
 import io.gitlab.nasso.urmusic.common.BoolValue;
 import io.gitlab.nasso.urmusic.common.RGBA32;
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
-import io.gitlab.nasso.urmusic.model.project.VideoEffectInstance;
 import io.gitlab.nasso.urmusic.model.project.param.BooleanParam;
 import io.gitlab.nasso.urmusic.model.project.param.FloatParam;
 import io.gitlab.nasso.urmusic.model.project.param.OptionParam;
@@ -37,7 +35,7 @@ import io.gitlab.nasso.urmusic.model.project.param.Point2DParam;
 import io.gitlab.nasso.urmusic.model.project.param.RGBA32Param;
 import io.gitlab.nasso.urmusic.model.renderer.video.NGLUtils;
 
-public class CircleMaskVFX extends TrackEffect implements VideoEffect {
+public class CircleMaskVFX extends VideoEffect {
 	private static final String PNAME_position = "position";
 	private static final String PNAME_color = "color";
 	private static final String PNAME_outerRadius = "outerRadius";
@@ -52,7 +50,7 @@ public class CircleMaskVFX extends TrackEffect implements VideoEffect {
 	private int prog, quadVAO;
 	private int loc_inputTex, loc_size, loc_color, loc_originInOutRadius, loc_inOutFade, loc_blending, loc_invert;
 	
-	public class CircleMaskVFXInstance extends TrackEffectInstance implements VideoEffectInstance  {
+	public class CircleMaskVFXInstance extends VideoEffectInstance {
 		public void setupParameters() {
 			this.addParameter(new Point2DParam(PNAME_position, 0, 0));
 			this.addParameter(new RGBA32Param(PNAME_color, 0xFFFFFFFF));
@@ -136,7 +134,7 @@ public class CircleMaskVFX extends TrackEffect implements VideoEffect {
 		this.glu.dispose(gl);
 	}
 
-	public TrackEffectInstance instance() {
+	public VideoEffectInstance instance() {
 		return new CircleMaskVFXInstance();
 	}
 

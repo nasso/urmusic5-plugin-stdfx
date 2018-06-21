@@ -26,16 +26,14 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import io.gitlab.nasso.urmusic.common.MathUtils;
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
-import io.gitlab.nasso.urmusic.model.project.VideoEffectInstance;
 import io.gitlab.nasso.urmusic.model.project.param.FloatParam;
 import io.gitlab.nasso.urmusic.model.project.param.Point2DParam;
 import io.gitlab.nasso.urmusic.model.project.param.Vector2DParam;
 import io.gitlab.nasso.urmusic.model.renderer.video.NGLUtils;
 
-public class AffineTransformVFX extends TrackEffect implements VideoEffect {
+public class AffineTransformVFX extends VideoEffect {
 	private static final String PNAME_translation = "translation";
 	private static final String PNAME_rotation = "rotation";
 	private static final String PNAME_scale = "scale";
@@ -46,7 +44,7 @@ public class AffineTransformVFX extends TrackEffect implements VideoEffect {
 	private int prog, quadVAO;
 	private int loc_inputTex, loc_xform, loc_opacity;
 	
-	public class AffineTransformVFXInstance extends TrackEffectInstance implements VideoEffectInstance {
+	public class AffineTransformVFXInstance extends VideoEffectInstance {
 		private Matrix4f xform = new Matrix4f();
 		
 		public void setupParameters() {
@@ -86,7 +84,7 @@ public class AffineTransformVFX extends TrackEffect implements VideoEffect {
 		}
 	}
 	
-	public TrackEffectInstance instance() {
+	public VideoEffectInstance instance() {
 		return new AffineTransformVFXInstance();
 	}
 	

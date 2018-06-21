@@ -33,10 +33,8 @@ import com.jogamp.opengl.GL3;
 import io.gitlab.nasso.urmusic.common.DataUtils;
 import io.gitlab.nasso.urmusic.common.event.EffectParamListener;
 import io.gitlab.nasso.urmusic.controller.UrmusicController;
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
-import io.gitlab.nasso.urmusic.model.project.VideoEffectInstance;
 import io.gitlab.nasso.urmusic.model.project.param.BoundsParam;
 import io.gitlab.nasso.urmusic.model.project.param.EffectParam;
 import io.gitlab.nasso.urmusic.model.project.param.FileParam;
@@ -45,7 +43,7 @@ import io.gitlab.nasso.urmusic.model.project.param.KeyFrame;
 import io.gitlab.nasso.urmusic.model.project.param.OptionParam;
 import io.gitlab.nasso.urmusic.model.renderer.video.NGLUtils;
 
-public class ImageDisplayVFX extends TrackEffect implements VideoEffect {
+public class ImageDisplayVFX extends VideoEffect {
 	private static final String PNAME_source = "source";
 	private static final String PNAME_bounds = "bounds";
 	private static final String PNAME_blendingMode = "blendingMode";
@@ -56,7 +54,7 @@ public class ImageDisplayVFX extends TrackEffect implements VideoEffect {
 	private int prog, quadVAO;
 	private int loc_xform, loc_inputTex, loc_imageTex, loc_blending, loc_opacity;
 	
-	public class ImageDisplayVFXInstance extends TrackEffectInstance implements VideoEffectInstance  {
+	public class ImageDisplayVFXInstance extends VideoEffectInstance {
 		private Matrix4f xform = new Matrix4f();
 		private Path lastSrc = null;
 		private BufferedImage loadedImage = null;
@@ -170,7 +168,7 @@ public class ImageDisplayVFX extends TrackEffect implements VideoEffect {
 		}
 	}
 	
-	public TrackEffectInstance instance() {
+	public VideoEffectInstance instance() {
 		return new ImageDisplayVFXInstance();
 	}
 	

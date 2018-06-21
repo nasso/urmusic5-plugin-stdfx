@@ -26,17 +26,15 @@ import com.jogamp.opengl.GL3;
 
 import io.gitlab.nasso.urmusic.common.BoolValue;
 import io.gitlab.nasso.urmusic.common.RGBA32;
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
-import io.gitlab.nasso.urmusic.model.project.VideoEffectInstance;
 import io.gitlab.nasso.urmusic.model.project.param.BooleanParam;
 import io.gitlab.nasso.urmusic.model.project.param.BoundsParam;
 import io.gitlab.nasso.urmusic.model.project.param.OptionParam;
 import io.gitlab.nasso.urmusic.model.project.param.RGBA32Param;
 import io.gitlab.nasso.urmusic.model.renderer.video.NGLUtils;
 
-public class RectangleMaskVFX extends TrackEffect implements VideoEffect {
+public class RectangleMaskVFX extends VideoEffect {
 	private static final String PNAME_color = "color";
 	private static final String PNAME_bounds = "bounds";
 	private static final String PNAME_blendingMode = "blendingMode";
@@ -47,7 +45,7 @@ public class RectangleMaskVFX extends TrackEffect implements VideoEffect {
 	private int prog, quadVAO;
 	private int loc_inputTex, loc_size, loc_color, loc_points, loc_blending, loc_invert;
 	
-	public class RectangleMaskVFXInstance extends TrackEffectInstance implements VideoEffectInstance  {
+	public class RectangleMaskVFXInstance extends VideoEffectInstance {
 		public void setupParameters() {
 			this.addParameter(new RGBA32Param(PNAME_color, 0xffffffff));
 			this.addParameter(new BoundsParam(PNAME_bounds, -50, -50, 100, 100));
@@ -98,7 +96,7 @@ public class RectangleMaskVFX extends TrackEffect implements VideoEffect {
 		}
 	}
 	
-	public TrackEffectInstance instance() {
+	public VideoEffectInstance instance() {
 		return new RectangleMaskVFXInstance();
 	}
 	

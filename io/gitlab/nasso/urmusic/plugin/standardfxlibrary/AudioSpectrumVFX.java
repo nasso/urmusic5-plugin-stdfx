@@ -29,10 +29,8 @@ import io.gitlab.nasso.urmusic.common.BoolValue;
 import io.gitlab.nasso.urmusic.common.MathUtils;
 import io.gitlab.nasso.urmusic.common.RGBA32;
 import io.gitlab.nasso.urmusic.model.UrmusicModel;
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
-import io.gitlab.nasso.urmusic.model.project.VideoEffectInstance;
 import io.gitlab.nasso.urmusic.model.project.param.BooleanParam;
 import io.gitlab.nasso.urmusic.model.project.param.FloatParam;
 import io.gitlab.nasso.urmusic.model.project.param.IntParam;
@@ -43,7 +41,7 @@ import io.gitlab.nasso.urmusic.model.renderer.audio.AudioRenderer;
 import io.gitlab.nasso.urmusic.model.renderer.video.NGLUtils;
 import io.gitlab.nasso.urmusic.model.renderer.video.glvg.GLVG;
 
-public class AudioSpectrumVFX extends TrackEffect implements VideoEffect {
+public class AudioSpectrumVFX extends VideoEffect {
 	private static final String PNAME_mode = "mode";
 	private static final String PNAME_color = "color";
 	private static final String PNAME_faceA = "faceA";
@@ -65,7 +63,7 @@ public class AudioSpectrumVFX extends TrackEffect implements VideoEffect {
 	private static final String PNAME_count = "count";
 	private static final String PNAME_blendingMode = "blendingMode";
 	
-	private class AudioSpectrumVFXInstance extends TrackEffectInstance implements VideoEffectInstance {
+	private class AudioSpectrumVFXInstance extends VideoEffectInstance {
 		private VideoEffectArgs args;
 		private int mode;
 		private RGBA32 color;
@@ -453,7 +451,7 @@ public class AudioSpectrumVFX extends TrackEffect implements VideoEffect {
 	public void globalVideoDispose(GL3 gl) {
 	}
 
-	public TrackEffectInstance instance() {
+	public VideoEffectInstance instance() {
 		return new AudioSpectrumVFXInstance();
 	}
 

@@ -19,11 +19,11 @@
  ******************************************************************************/
 package io.gitlab.nasso.urmusic.plugin.standardfxlibrary;
 
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
+import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.plugin.UrmPlugin;
 
 public class Main implements UrmPlugin {
-	private static final TrackEffect[] EFFECTS = {
+	private static final VideoEffect[] EFFECTS = {
 		// Basics
 		new ImageDisplayVFX(),
 		new CircleMaskVFX(),
@@ -37,7 +37,7 @@ public class Main implements UrmPlugin {
 		new AudioSpectrumVFX(),
 	};
 	
-	public TrackEffect[] getEffects() {
+	public VideoEffect[] getEffects() {
 		return EFFECTS;
 	}
 	

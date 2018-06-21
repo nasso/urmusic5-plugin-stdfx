@@ -26,16 +26,14 @@ import com.jogamp.opengl.GL3;
 
 import io.gitlab.nasso.urmusic.common.MathUtils;
 import io.gitlab.nasso.urmusic.model.UrmusicModel;
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
-import io.gitlab.nasso.urmusic.model.project.VideoEffectInstance;
 import io.gitlab.nasso.urmusic.model.project.param.FloatParam;
 import io.gitlab.nasso.urmusic.model.project.param.IntParam;
 import io.gitlab.nasso.urmusic.model.project.param.Point2DParam;
 import io.gitlab.nasso.urmusic.model.renderer.video.glvg.GLVG;
 
-public class AudioScopeVFX extends TrackEffect implements VideoEffect {
+public class AudioScopeVFX extends VideoEffect {
 	private static final String PNAME_startPoint = "startPoint";
 	private static final String PNAME_endPoint = "endPoint";
 	private static final String PNAME_millisOffset = "millisOffset";
@@ -43,7 +41,7 @@ public class AudioScopeVFX extends TrackEffect implements VideoEffect {
 	private static final String PNAME_lineWidth = "lineWidth";
 	private static final String PNAME_precision = "precision";
 	
-	private class AudioScopeVFXInstance extends TrackEffectInstance implements VideoEffectInstance {
+	private class AudioScopeVFXInstance extends VideoEffectInstance {
 		private GLVG vg;
 		
 		private float[] audioData = new float[512];
@@ -105,7 +103,7 @@ public class AudioScopeVFX extends TrackEffect implements VideoEffect {
 	public void globalVideoDispose(GL3 gl) {
 	}
 
-	public TrackEffectInstance instance() {
+	public VideoEffectInstance instance() {
 		return new AudioScopeVFXInstance();
 	}
 

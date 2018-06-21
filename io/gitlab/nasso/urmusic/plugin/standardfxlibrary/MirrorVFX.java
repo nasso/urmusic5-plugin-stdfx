@@ -25,15 +25,13 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
 import io.gitlab.nasso.urmusic.common.BoolValue;
-import io.gitlab.nasso.urmusic.model.project.TrackEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
-import io.gitlab.nasso.urmusic.model.project.VideoEffectInstance;
 import io.gitlab.nasso.urmusic.model.project.param.BooleanParam;
 import io.gitlab.nasso.urmusic.model.project.param.Point2DParam;
 import io.gitlab.nasso.urmusic.model.renderer.video.NGLUtils;
 
-public class MirrorVFX extends TrackEffect implements VideoEffect {
+public class MirrorVFX extends VideoEffect {
 	private static final String PNAME_edge0 = "edge0";
 	private static final String PNAME_edge1 = "edge1";
 	private static final String PNAME_invert = "invert";
@@ -43,7 +41,7 @@ public class MirrorVFX extends TrackEffect implements VideoEffect {
 	private int prog, quadVAO;
 	private int loc_inputTex, loc_edge;
 	
-	public class MirrorVFXInstance extends TrackEffectInstance implements VideoEffectInstance  {
+	public class MirrorVFXInstance extends VideoEffectInstance {
 		public void setupParameters() {
 			this.addParameter(new Point2DParam(PNAME_edge0, 0, 100));
 			this.addParameter(new Point2DParam(PNAME_edge1, 0, -100));
@@ -77,7 +75,7 @@ public class MirrorVFX extends TrackEffect implements VideoEffect {
 		}
 	}
 	
-	public TrackEffectInstance instance() {
+	public VideoEffectInstance instance() {
 		return new MirrorVFXInstance();
 	}
 	
