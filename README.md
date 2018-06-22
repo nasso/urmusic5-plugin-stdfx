@@ -1,5 +1,5 @@
 # urmusic5-plugin-stdfx
-The plugin adding the standard effects to (https://gitlab.com/nasso/urmusic5-core)[urmusic5-core].
+The plugin adding the standard effects to [urmusic5-core](https://gitlab.com/nasso/urmusic5-core).
 
 This version isn't ready for production yet. It's licensed under the GNU General Public License Version 3.
 
