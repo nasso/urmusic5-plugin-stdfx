@@ -19,9 +19,14 @@
  ******************************************************************************/
 package io.gitlab.nasso.urmusic.plugin.standardfxlibrary;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import javax.imageio.ImageIO;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -30,7 +35,6 @@ import org.joml.Vector4fc;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 
-import io.gitlab.nasso.urmusic.common.DataUtils;
 import io.gitlab.nasso.urmusic.common.event.EffectParamListener;
 import io.gitlab.nasso.urmusic.controller.UrmusicController;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
@@ -55,6 +59,8 @@ public class ImageDisplayVFX extends VideoEffect {
 	private int loc_xform, loc_inputTex, loc_imageTex, loc_blending, loc_opacity;
 	
 	public class ImageDisplayVFXInstance extends VideoEffectInstance {
+		private final BufferedImage defaultImage;
+		
 		private Matrix4f xform = new Matrix4f();
 		private Path lastSrc = null;
 		private BufferedImage loadedImage = null;
@@ -63,6 +69,17 @@ public class ImageDisplayVFX extends VideoEffect {
 		private boolean textureLoaded = true;
 		
 		private EffectParamListener<Path> fileListener;
+		
+		public ImageDisplayVFXInstance() {
+			this.defaultImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = this.defaultImage.createGraphics();
+			g2d.setColor(Color.MAGENTA);
+			g2d.fillRect(0, 0, 256, 256);
+			g2d.setColor(Color.BLACK);
+			g2d.fillRect(0, 0, 128, 128);
+			g2d.fillRect(128, 128, 128, 128);
+			g2d.dispose();
+		}
 		
 		public void setupParameters() {
 			FileParam source = new FileParam(PNAME_source);
@@ -111,7 +128,13 @@ public class ImageDisplayVFX extends VideoEffect {
 		}
 		
 		private void reloadImage() {
-			this.loadedImage = DataUtils.loadImage(this.lastSrc.toString());
+			try {
+				this.loadedImage = ImageIO.read(this.lastSrc.toFile());
+			} catch(IOException e) {
+				System.err.println("Couldn't load: " + this.lastSrc.toString());
+				this.loadedImage = this.defaultImage;
+			}
+			
 			this.textureLoaded = false;
 		}
 		
