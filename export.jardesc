@@ -11,17 +11,6 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.fx.polar_coords"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.lang"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;io.gitlab.nasso.urmusic.plugin.standardfxlibrary"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.glvg"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.fx.circle_mask"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.include"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.fx.affine_transform"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.fx.image_display"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.fx.rectangle_mask"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.fx.mirror"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.fx.audio_spectrum"/>
-        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/&lt;res.shaders.gl3.fx.gaussian_blur"/>
+        <javaElement handleIdentifier="=urmusic5-plugin-stdfx/src"/>
     </selectedElements>
 </jardesc>

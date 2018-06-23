@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path=""/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/urmusic5-core/libs/gluegen/gluegen-rt-natives-linux-amd64.jar"/>
 	<classpathentry kind="lib" path="/urmusic5-core/libs/gluegen/gluegen-rt-natives-linux-armv6.jar"/>
