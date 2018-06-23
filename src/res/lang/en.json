@@ -272,6 +272,15 @@
 					"name": "Exponent"
 				},
 				
+				"lineCaps": {
+					"name": "Line Caps",
+					"option": {
+						"butt": "Butt",
+						"round": "Round",
+						"square": "Square"
+					}
+				},
+				
 				"size": {
 					"name": "Size"
 				},

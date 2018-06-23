@@ -40,6 +40,7 @@ import io.gitlab.nasso.urmusic.model.project.param.RGBA32Param;
 import io.gitlab.nasso.urmusic.model.renderer.audio.AudioRenderer;
 import io.gitlab.nasso.urmusic.model.renderer.video.NGLUtils;
 import io.gitlab.nasso.urmusic.model.renderer.video.glvg.GLVG;
+import io.gitlab.nasso.urmusic.model.renderer.video.glvg.VGLineCap;
 
 public class AudioSpectrumVFX extends VideoEffect {
 	private static final String PNAME_mode = "mode";
@@ -59,6 +60,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 	private static final String PNAME_height = "height";
 	private static final String PNAME_minHeight = "minHeight";
 	private static final String PNAME_exponent = "exponent";
+	private static final String PNAME_lineCaps = "lineCaps";
 	private static final String PNAME_size = "size";
 	private static final String PNAME_count = "count";
 	private static final String PNAME_blendingMode = "blendingMode";
@@ -82,6 +84,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 		private float height;
 		private float minHeight;
 		private float exponent;
+		private int lineCaps;
 		private float size;
 		private int count;
 		private int blendingMode;
@@ -121,6 +124,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.addParameter(new FloatParam(PNAME_height, 200.0f, 1.0f));
 			this.addParameter(new FloatParam(PNAME_minHeight, 2.0f, 1.0f, 0.0f, Float.MAX_VALUE));
 			this.addParameter(new FloatParam(PNAME_exponent, 2.0f, 1.0f, 0.0f, Float.MAX_VALUE));
+			this.addParameter(new OptionParam(PNAME_lineCaps, 0, "butt", "round", "square"));
 			this.addParameter(new FloatParam(PNAME_size, 2.0f, 1.0f, 0.0f, Float.MAX_VALUE));
 			this.addParameter(new IntParam(PNAME_count, 128, 1, 1, Integer.MAX_VALUE));
 			this.addParameter(new OptionParam(PNAME_blendingMode, 8, 
@@ -366,6 +370,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.height = ((float) args.parameters.get(PNAME_height));
 			this.minHeight = ((float) args.parameters.get(PNAME_minHeight));
 			this.exponent = ((float) args.parameters.get(PNAME_exponent));
+			this.lineCaps = ((int) args.parameters.get(PNAME_lineCaps));
 			this.size = ((float) args.parameters.get(PNAME_size));
 			this.count = ((int) args.parameters.get(PNAME_count));
 			this.blendingMode = ((int) args.parameters.get(PNAME_blendingMode));
@@ -408,6 +413,18 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.vg.setLineWidth(this.size);
 			this.vg.setStrokeColor(this.color.getRGBA());
 			this.vg.setFillColor(this.color.getRGBA());
+			
+			switch(this.lineCaps) {
+				case 0: // BUTT
+					this.vg.setLineCaps(VGLineCap.BUTT);
+					break;
+				case 1: // ROUND
+					this.vg.setLineCaps(VGLineCap.ROUND);
+					break;
+				case 2: // SQUARE
+					this.vg.setLineCaps(VGLineCap.SQUARE);
+					break;
+			}
 			
 			switch(this.mode) {
 				case 0: // OUTLINE
