@@ -28,6 +28,7 @@ import com.jogamp.opengl.GL3;
 import io.gitlab.nasso.urmusic.common.MathUtils;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
+import io.gitlab.nasso.urmusic.model.project.param.AngleParam;
 import io.gitlab.nasso.urmusic.model.project.param.FloatParam;
 import io.gitlab.nasso.urmusic.model.project.param.Point2DParam;
 import io.gitlab.nasso.urmusic.model.project.param.Vector2DParam;
@@ -49,7 +50,7 @@ public class AffineTransformVFX extends VideoEffect {
 		
 		public void setupParameters() {
 			this.addParameter(new Point2DParam(PNAME_translation, 0, 0));
-			this.addParameter(new FloatParam(PNAME_rotation, 0.0f));
+			this.addParameter(new AngleParam(PNAME_rotation));
 			this.addParameter(new Vector2DParam(PNAME_scale, 1.0f, 1.0f, 0.01f, 0.01f));
 			this.addParameter(new FloatParam(PNAME_opacity, 1.0f, 0.01f, 0.0f, 1.0f));
 		}
