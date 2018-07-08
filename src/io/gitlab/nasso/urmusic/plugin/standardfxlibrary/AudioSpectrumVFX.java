@@ -45,8 +45,7 @@ import io.gitlab.nasso.urmusic.model.renderer.video.glvg.VGLineCap;
 public class AudioSpectrumVFX extends VideoEffect {
 	private static final String PNAME_mode = "mode";
 	private static final String PNAME_color = "color";
-	private static final String PNAME_faceA = "faceA";
-	private static final String PNAME_faceB = "faceB";
+	private static final String PNAME_faceMode = "faceMode";
 	private static final String PNAME_zeroLast = "zeroLast";
 	private static final String PNAME_polar = "polar";
 	private static final String PNAME_startPoint = "startPoint";
@@ -71,8 +70,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 		private RGBA32 color;
 		private Vector2fc startPoint;
 		private Vector2fc endPoint;
-		private boolean faceA;
-		private boolean faceB;
+		private int faceMode;
 		private boolean zeroLast;
 		private boolean polar;
 		private float millisOffset;
@@ -107,12 +105,15 @@ public class AudioSpectrumVFX extends VideoEffect {
 		private float[] xy = new float[2];
 		
 		public void setupParameters() {
-			this.addParameter(new OptionParam(PNAME_mode, 1, "outline", "lines", "fill", "dots"));
+			// That's where the order matters
 			this.addParameter(new RGBA32Param(PNAME_color, 0xFFFFFFFF));
-			this.addParameter(new BooleanParam(PNAME_faceA, BoolValue.TRUE));
-			this.addParameter(new BooleanParam(PNAME_faceB, BoolValue.TRUE));
+			this.addParameter(new OptionParam(PNAME_mode, 1, "outline", "lines", "fill", "dots"));
+			this.addParameter(new OptionParam(PNAME_faceMode, 2, "faceA", "faceB", "both", "alternate"));
+			this.addParameter(new OptionParam(PNAME_lineCaps, 0, "butt", "round", "square"));
 			this.addParameter(new BooleanParam(PNAME_zeroLast, BoolValue.TRUE));
 			this.addParameter(new BooleanParam(PNAME_polar, BoolValue.FALSE));
+			this.addParameter(new IntParam(PNAME_count, 128, 1, 1, Integer.MAX_VALUE));
+			this.addParameter(new FloatParam(PNAME_size, 2.0f, 1.0f, 0.0f, Float.MAX_VALUE));
 			this.addParameter(new Point2DParam(PNAME_startPoint, -500, 150));
 			this.addParameter(new Point2DParam(PNAME_endPoint, +500, 150));
 			this.addParameter(new FloatParam(PNAME_millisOffset, 0.0f, 1.0f));
@@ -121,12 +122,9 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.addParameter(new FloatParam(PNAME_maxDecibel, -20.0f, 1.0f));
 			this.addParameter(new FloatParam(PNAME_minFreq, 0.0f, 10.0f, 0.0f, Float.MAX_VALUE));
 			this.addParameter(new FloatParam(PNAME_maxFreq, 140.0f, 10.0f, 0.0f, Float.MAX_VALUE));
-			this.addParameter(new FloatParam(PNAME_height, 200.0f, 1.0f));
 			this.addParameter(new FloatParam(PNAME_minHeight, 2.0f, 1.0f, 0.0f, Float.MAX_VALUE));
+			this.addParameter(new FloatParam(PNAME_height, 200.0f, 1.0f));
 			this.addParameter(new FloatParam(PNAME_exponent, 2.0f, 1.0f, 0.0f, Float.MAX_VALUE));
-			this.addParameter(new OptionParam(PNAME_lineCaps, 0, "butt", "round", "square"));
-			this.addParameter(new FloatParam(PNAME_size, 2.0f, 1.0f, 0.0f, Float.MAX_VALUE));
-			this.addParameter(new IntParam(PNAME_count, 128, 1, 1, Integer.MAX_VALUE));
 			this.addParameter(new OptionParam(PNAME_blendingMode, 8, 
 				"srcOver",
 				"dstOver",
@@ -164,6 +162,46 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.xy[1] = MathUtils.sinf(a) * r;
 		}
 		
+		private void traceFace(float expandX, float expandY, float minExpandX, float minExpandY, boolean alternate) {
+			this.xy[0] = this.startPoint.x();
+			this.xy[1] = -this.startPoint.y();
+			if(this.polar) this.xyToPolar();
+			
+			if(this.zeroLast)
+				this.vg.moveTo(this.xy[0], this.xy[1]);
+			
+			for(int i = 0; i < this.count; i++) {
+				float p = (float) i / (this.count - 1);
+				
+				// [0..1] frequency amplitude
+				float freqVal = MathUtils.clamp(Math.max((MathUtils.getValue(this.audioData, MathUtils.lerp(this.minFreq, this.maxFreq, p) * this.audioData.length, true) - this.minDecibel), 0.0f) / (this.maxDecibel - this.minDecibel), 0.0f, 1.0f);
+				freqVal = MathUtils.powf(freqVal, this.exponent);
+				
+				this.xy[0] = MathUtils.lerp(this.startPoint.x(), this.endPoint.x(), p) + freqVal * expandX + minExpandX;
+				this.xy[1] = -MathUtils.lerp(this.startPoint.y(), this.endPoint.y(), p) + freqVal * expandY + minExpandY;
+				
+				if(this.polar) this.xyToPolar();
+				
+				if(this.zeroLast || i != 0) this.vg.lineTo(this.xy[0], this.xy[1]);
+				else this.vg.moveTo(this.xy[0], this.xy[1]);
+				
+				if(alternate) {
+					expandX = -expandX;
+					expandY = -expandY;
+					minExpandX = -minExpandX;
+					minExpandY = -minExpandY;
+				}
+			}
+			
+			if(this.zeroLast) {
+				this.xy[0] = this.endPoint.x();
+				this.xy[1] = -this.endPoint.y();
+				if(this.polar) this.xyToPolar();
+				
+				this.vg.lineTo(this.xy[0], this.xy[1]);
+			}
+		}
+		
 		private void traceOutline() {
 			float dx = this.endPoint.x() - this.startPoint.x();
 			float dy = this.endPoint.y() - this.startPoint.y();
@@ -174,68 +212,22 @@ public class AudioSpectrumVFX extends VideoEffect {
 			float minExpandY = (-dx) * distInv * this.minHeight;
 			
 			this.vg.beginPath();
-			if(this.faceA) {
-				this.xy[0] = this.startPoint.x();
-				this.xy[1] = -this.startPoint.y();
-				if(this.polar) this.xyToPolar();
-				
-				if(this.zeroLast)
-					this.vg.moveTo(this.xy[0], this.xy[1]);
-				
-				for(int i = 0; i < this.count; i++) {
-					float p = (float) i / (this.count - 1);
-					
-					// [0..1] frequency amplitude
-					float freqVal = MathUtils.clamp(Math.max((MathUtils.getValue(this.audioData, MathUtils.lerp(this.minFreq, this.maxFreq, p) * this.audioData.length, true) - this.minDecibel), 0.0f) / (this.maxDecibel - this.minDecibel), 0.0f, 1.0f);
-					freqVal = MathUtils.powf(freqVal, this.exponent);
-					
-					this.xy[0] = MathUtils.lerp(this.startPoint.x(), this.endPoint.x(), p) - freqVal * expandX - minExpandX;
-					this.xy[1] = -MathUtils.lerp(this.startPoint.y(), this.endPoint.y(), p) + freqVal * expandY + minExpandY;
-					if(this.polar) this.xyToPolar();
-					
-					if(this.zeroLast || i != 0) this.vg.lineTo(this.xy[0], this.xy[1]);
-					else this.vg.moveTo(this.xy[0], this.xy[1]);
-				}
-				
-				if(this.zeroLast) {
-					this.xy[0] = this.endPoint.x();
-					this.xy[1] = -this.endPoint.y();
-					if(this.polar) this.xyToPolar();
-					
-					this.vg.lineTo(this.xy[0], this.xy[1]);
-				}
-			}
-
-			if(this.faceB) {
-				this.xy[0] = this.startPoint.x();
-				this.xy[1] = -this.startPoint.y();
-				if(this.polar) this.xyToPolar();
-
-				if(this.zeroLast)
-					this.vg.moveTo(this.xy[0], this.xy[1]);
-				
-				for(int i = 0; i < this.count; i++) {
-					float p = (float) i / (this.count - 1);
-					
-					// [0..1] frequency amplitude
-					float freqVal = MathUtils.clamp(Math.max((MathUtils.getValue(this.audioData, MathUtils.lerp(this.minFreq, this.maxFreq, p) * this.audioData.length, true) - this.minDecibel), 0.0f) / (this.maxDecibel - this.minDecibel), 0.0f, 1.0f);
-					freqVal = MathUtils.powf(freqVal, this.exponent);
-					
-					this.xy[0] = MathUtils.lerp(this.startPoint.x(), this.endPoint.x(), p) + freqVal * expandX + minExpandX;
-					this.xy[1] = -MathUtils.lerp(this.startPoint.y(), this.endPoint.y(), p) - freqVal * expandY - minExpandY;
-					if(this.polar) this.xyToPolar();
-
-					if(this.zeroLast || i != 0) this.vg.lineTo(this.xy[0], this.xy[1]);
-					else this.vg.moveTo(this.xy[0], this.xy[1]);
-				}
-
-				if(this.zeroLast) {
-					this.xy[0] = this.endPoint.x();
-					this.xy[1] = -this.endPoint.y();
-					if(this.polar) this.xyToPolar();
-					
-					this.vg.lineTo(this.xy[0], this.xy[1]);
-				}
+			
+			// The trick to get different faces is to play with the sign
+			switch(this.faceMode) {
+				case 0: // faceA
+					this.traceFace(-expandX, +expandY, -minExpandX, +minExpandY, false);
+					break;
+				case 1: // faceB
+					this.traceFace(+expandX, -expandY, +minExpandX, -minExpandY, false);
+					break;
+				case 2: // both
+					this.traceFace(-expandX, +expandY, -minExpandX, +minExpandY, false);
+					this.traceFace(+expandX, -expandY, +minExpandX, -minExpandY, false);
+					break;
+				case 3: // alternate
+					this.traceFace(-expandX, +expandY, -minExpandX, +minExpandY, true);
+					break;
 			}
 		}
 		
@@ -258,64 +250,21 @@ public class AudioSpectrumVFX extends VideoEffect {
 			float minExpandX = (dy) * distInv * this.minHeight;
 			float minExpandY = (-dx) * distInv * this.minHeight;
 			
-			this.vg.beginPath();
-			for(int i = 0; i < this.count; i++) {
-				float p = (float) i / (this.count - 1);
-				
-				// [0..1] frequency amplitude
-				float freqVal = MathUtils.clamp(Math.max((MathUtils.getValue(this.audioData, MathUtils.lerp(this.minFreq, this.maxFreq, p) * this.audioData.length, true) - this.minDecibel), 0.0f) / (this.maxDecibel - this.minDecibel), 0.0f, 1.0f);
-				freqVal = MathUtils.powf(freqVal, this.exponent);
-				
-				float sx = MathUtils.lerp(this.startPoint.x(), this.endPoint.x(), p);
-				float sy = -MathUtils.lerp(this.startPoint.y(), this.endPoint.y(), p);
-				float xa = sx - freqVal * expandX - minExpandX;
-				float ya = sy + freqVal * expandY + minExpandY;
-				float xb = sx + freqVal * expandX + minExpandX;
-				float yb = sy - freqVal * expandY - minExpandY;
-
-				if(this.faceA && this.faceB) {
-					this.xy[0] = xa;
-					this.xy[1] = ya;
-					if(this.polar) this.xyToPolar();
-					this.vg.moveTo(this.xy[0], this.xy[1]);
-					
-					this.xy[0] = xb;
-					this.xy[1] = yb;
-					if(this.polar) this.xyToPolar();
-					this.vg.lineTo(this.xy[0], this.xy[1]);
-				} else if(this.faceA) {
-					this.xy[0] = sx;
-					this.xy[1] = sy;
-					if(this.polar) this.xyToPolar();
-					this.vg.moveTo(this.xy[0], this.xy[1]);
-					
-					this.xy[0] = xa;
-					this.xy[1] = ya;
-					if(this.polar) this.xyToPolar();
-					this.vg.lineTo(this.xy[0], this.xy[1]);
-				} else if(this.faceB) {
-					this.xy[0] = sx;
-					this.xy[1] = sy;
-					if(this.polar) this.xyToPolar();
-					this.vg.moveTo(this.xy[0], this.xy[1]);
-
-					this.xy[0] = xb;
-					this.xy[1] = yb;
-					if(this.polar) this.xyToPolar();
-					this.vg.lineTo(this.xy[0], this.xy[1]);
-				}
+			boolean faceA = true;
+			boolean faceB = false;
+			
+			switch(this.faceMode) {
+				case 0: // faceA
+					faceA = true;
+					break;
+				case 1: // faceB
+					faceB = true;
+					break;
+				case 2: // both
+					faceA = true;
+					faceB = true;
+					break;
 			}
-			this.vg.stroke();
-		}
-		
-		private void renderDots() {
-			float dx = this.endPoint.x() - this.startPoint.x();
-			float dy = this.endPoint.y() - this.startPoint.y();
-			float distInv = (float) (1.0 / Math.sqrt(dx * dx + dy * dy));
-			float expandX = (dy) * distInv * this.height;
-			float expandY = (-dx) * distInv * this.height;
-			float minExpandX = (dy) * distInv * this.minHeight;
-			float minExpandY = (-dx) * distInv * this.minHeight;
 			
 			this.vg.beginPath();
 			for(int i = 0; i < this.count; i++) {
@@ -331,8 +280,89 @@ public class AudioSpectrumVFX extends VideoEffect {
 				float ya = sy + freqVal * expandY + minExpandY;
 				float xb = sx + freqVal * expandX + minExpandX;
 				float yb = sy - freqVal * expandY - minExpandY;
+
+				if(faceA && faceB) {
+					this.xy[0] = xa;
+					this.xy[1] = ya;
+					if(this.polar) this.xyToPolar();
+					this.vg.moveTo(this.xy[0], this.xy[1]);
+					
+					this.xy[0] = xb;
+					this.xy[1] = yb;
+					if(this.polar) this.xyToPolar();
+					this.vg.lineTo(this.xy[0], this.xy[1]);
+				} else if(faceA) {
+					this.xy[0] = sx;
+					this.xy[1] = sy;
+					if(this.polar) this.xyToPolar();
+					this.vg.moveTo(this.xy[0], this.xy[1]);
+					
+					this.xy[0] = xa;
+					this.xy[1] = ya;
+					if(this.polar) this.xyToPolar();
+					this.vg.lineTo(this.xy[0], this.xy[1]);
+				} else if(faceB) {
+					this.xy[0] = sx;
+					this.xy[1] = sy;
+					if(this.polar) this.xyToPolar();
+					this.vg.moveTo(this.xy[0], this.xy[1]);
+
+					this.xy[0] = xb;
+					this.xy[1] = yb;
+					if(this.polar) this.xyToPolar();
+					this.vg.lineTo(this.xy[0], this.xy[1]);
+				}
 				
-				if(this.faceA) {
+				if(this.faceMode == 3) { // alternate
+					faceA = !faceA;
+					faceB = !faceB;
+				}
+
+			}
+			this.vg.stroke();
+		}
+		
+		private void renderDots() {
+			float dx = this.endPoint.x() - this.startPoint.x();
+			float dy = this.endPoint.y() - this.startPoint.y();
+			float distInv = (float) (1.0 / Math.sqrt(dx * dx + dy * dy));
+			float expandX = (dy) * distInv * this.height;
+			float expandY = (-dx) * distInv * this.height;
+			float minExpandX = (dy) * distInv * this.minHeight;
+			float minExpandY = (-dx) * distInv * this.minHeight;
+			
+			boolean faceA = true;
+			boolean faceB = false;
+			
+			switch(this.faceMode) {
+				case 0: // faceA
+					faceA = true;
+					break;
+				case 1: // faceB
+					faceB = true;
+					break;
+				case 2: // both
+					faceA = true;
+					faceB = true;
+					break;
+			}
+			
+			this.vg.beginPath();
+			for(int i = 0; i < this.count; i++) {
+				float p = (float) i / (this.count - 1);
+				
+				// [0..1] frequency amplitude
+				float freqVal = MathUtils.clamp(Math.max((MathUtils.getValue(this.audioData, MathUtils.lerp(this.minFreq, this.maxFreq, p) * this.audioData.length, true) - this.minDecibel), 0.0f) / (this.maxDecibel - this.minDecibel), 0.0f, 1.0f);
+				freqVal = MathUtils.powf(freqVal, this.exponent);
+				
+				float sx = MathUtils.lerp(this.startPoint.x(), this.endPoint.x(), p);
+				float sy = -MathUtils.lerp(this.startPoint.y(), this.endPoint.y(), p);
+				float xa = sx - freqVal * expandX - minExpandX;
+				float ya = sy + freqVal * expandY + minExpandY;
+				float xb = sx + freqVal * expandX + minExpandX;
+				float yb = sy - freqVal * expandY - minExpandY;
+
+				if(faceA) {
 					this.xy[0] = xa;
 					this.xy[1] = ya;
 					if(this.polar) this.xyToPolar();
@@ -340,12 +370,17 @@ public class AudioSpectrumVFX extends VideoEffect {
 					this.vg.oval(this.xy[0], this.xy[1], this.size, this.size);
 				}
 				
-				if(this.faceB) {
+				if(faceB) {
 					this.xy[0] = xb;
 					this.xy[1] = yb;
 					if(this.polar) this.xyToPolar();
 					this.vg.moveTo(this.xy[0], this.xy[1]);
 					this.vg.oval(this.xy[0], this.xy[1], this.size, this.size);
+				}
+				
+				if(this.faceMode == 3) { // alternate
+					faceA = !faceA;
+					faceB = !faceB;
 				}
 			}
 			this.vg.fill();
@@ -357,8 +392,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.color = ((RGBA32) args.parameters.get(PNAME_color));
 			this.startPoint = ((Vector2fc) args.parameters.get(PNAME_startPoint));
 			this.endPoint = ((Vector2fc) args.parameters.get(PNAME_endPoint));
-			this.faceA = args.parameters.get(PNAME_faceA) == BoolValue.TRUE;
-			this.faceB = args.parameters.get(PNAME_faceB) == BoolValue.TRUE;
+			this.faceMode = ((int) args.parameters.get(PNAME_faceMode));
 			this.zeroLast = args.parameters.get(PNAME_zeroLast) == BoolValue.TRUE;
 			this.polar = args.parameters.get(PNAME_polar) == BoolValue.TRUE;
 			this.millisOffset = ((float) args.parameters.get(PNAME_millisOffset));
@@ -374,11 +408,6 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.size = ((float) args.parameters.get(PNAME_size));
 			this.count = ((int) args.parameters.get(PNAME_count));
 			this.blendingMode = ((int) args.parameters.get(PNAME_blendingMode));
-			
-			if(!this.faceA && !this.faceB) {
-				args.cancelled = true;
-				return;
-			}
 			
 			{ // In a block so "min" and "max" aren't annoying later if we need to name vars like that
 				float min = Math.min(this.minDecibel, this.maxDecibel);

@@ -212,12 +212,14 @@
 					"name": "Color"
 				},
 				
-				"faceA": {
-					"name": "Face A"
-				},
-				
-				"faceB": {
-					"name": "Face B"
+				"faceMode": {
+					"name": "Face Mode",
+					"option": {
+						"faceA": "Face A",
+						"faceB": "Face B",
+						"both": "Both",
+						"alternate": "Alternate"
+					}
 				},
 				
 				"zeroLast": {
