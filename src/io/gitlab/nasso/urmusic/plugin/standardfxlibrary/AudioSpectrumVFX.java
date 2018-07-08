@@ -43,11 +43,14 @@ import io.gitlab.nasso.urmusic.model.renderer.video.glvg.GLVG;
 import io.gitlab.nasso.urmusic.model.renderer.video.glvg.VGLineCap;
 
 public class AudioSpectrumVFX extends VideoEffect {
-	private static final String PNAME_mode = "mode";
 	private static final String PNAME_color = "color";
+	private static final String PNAME_mode = "mode";
 	private static final String PNAME_faceMode = "faceMode";
+	private static final String PNAME_lineCaps = "lineCaps";
 	private static final String PNAME_zeroLast = "zeroLast";
 	private static final String PNAME_polar = "polar";
+	private static final String PNAME_count = "count";
+	private static final String PNAME_size = "size";
 	private static final String PNAME_startPoint = "startPoint";
 	private static final String PNAME_endPoint = "endPoint";
 	private static final String PNAME_millisOffset = "millisOffset";
@@ -56,35 +59,33 @@ public class AudioSpectrumVFX extends VideoEffect {
 	private static final String PNAME_maxDecibel = "maxDecibel";
 	private static final String PNAME_minFreq = "minFreq";
 	private static final String PNAME_maxFreq = "maxFreq";
-	private static final String PNAME_height = "height";
 	private static final String PNAME_minHeight = "minHeight";
+	private static final String PNAME_height = "height";
 	private static final String PNAME_exponent = "exponent";
-	private static final String PNAME_lineCaps = "lineCaps";
-	private static final String PNAME_size = "size";
-	private static final String PNAME_count = "count";
 	private static final String PNAME_blendingMode = "blendingMode";
 	
 	private class AudioSpectrumVFXInstance extends VideoEffectInstance {
 		private VideoEffectArgs args;
-		private int mode;
+		
 		private RGBA32 color;
-		private Vector2fc startPoint;
-		private Vector2fc endPoint;
+		private int mode;
 		private int faceMode;
+		private int lineCaps;
 		private boolean zeroLast;
 		private boolean polar;
+		private int count;
+		private float size;
+		private Vector2fc startPoint;
+		private Vector2fc endPoint;
 		private float millisOffset;
 		private float duration;
 		private float minDecibel;
 		private float maxDecibel;
 		private float minFreq;
 		private float maxFreq;
-		private float height;
 		private float minHeight;
+		private float height;
 		private float exponent;
-		private int lineCaps;
-		private float size;
-		private int count;
 		private int blendingMode;
 		
 		private GLVG vg;
@@ -388,25 +389,25 @@ public class AudioSpectrumVFX extends VideoEffect {
 		
 		public void applyVideo(GL3 gl, VideoEffectArgs args) {
 			this.args = args;
-			this.mode = ((int) args.parameters.get(PNAME_mode));
 			this.color = ((RGBA32) args.parameters.get(PNAME_color));
-			this.startPoint = ((Vector2fc) args.parameters.get(PNAME_startPoint));
-			this.endPoint = ((Vector2fc) args.parameters.get(PNAME_endPoint));
+			this.mode = ((int) args.parameters.get(PNAME_mode));
 			this.faceMode = ((int) args.parameters.get(PNAME_faceMode));
+			this.lineCaps = ((int) args.parameters.get(PNAME_lineCaps));
 			this.zeroLast = args.parameters.get(PNAME_zeroLast) == BoolValue.TRUE;
 			this.polar = args.parameters.get(PNAME_polar) == BoolValue.TRUE;
+			this.count = ((int) args.parameters.get(PNAME_count));
+			this.size = ((float) args.parameters.get(PNAME_size));
+			this.startPoint = ((Vector2fc) args.parameters.get(PNAME_startPoint));
+			this.endPoint = ((Vector2fc) args.parameters.get(PNAME_endPoint));
 			this.millisOffset = ((float) args.parameters.get(PNAME_millisOffset));
 			this.duration = ((float) args.parameters.get(PNAME_duration));
 			this.minDecibel = ((float) args.parameters.get(PNAME_minDecibel));
 			this.maxDecibel = ((float) args.parameters.get(PNAME_maxDecibel));
 			this.minFreq = ((float) args.parameters.get(PNAME_minFreq)) / UrmusicModel.getAudioRenderer().getSampleRate();
 			this.maxFreq = ((float) args.parameters.get(PNAME_maxFreq)) / UrmusicModel.getAudioRenderer().getSampleRate();
-			this.height = ((float) args.parameters.get(PNAME_height));
 			this.minHeight = ((float) args.parameters.get(PNAME_minHeight));
+			this.height = ((float) args.parameters.get(PNAME_height));
 			this.exponent = ((float) args.parameters.get(PNAME_exponent));
-			this.lineCaps = ((int) args.parameters.get(PNAME_lineCaps));
-			this.size = ((float) args.parameters.get(PNAME_size));
-			this.count = ((int) args.parameters.get(PNAME_count));
 			this.blendingMode = ((int) args.parameters.get(PNAME_blendingMode));
 			
 			{ // In a block so "min" and "max" aren't annoying later if we need to name vars like that

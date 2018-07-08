@@ -255,11 +255,11 @@
 				},
 				
 				"minFreq": {
-					"name": "Min Frequency (%)"
+					"name": "Min Frequency"
 				},
 				
 				"maxFreq": {
-					"name": "Max Frequency (%)"
+					"name": "Max Frequency"
 				},
 				
 				"height": {
