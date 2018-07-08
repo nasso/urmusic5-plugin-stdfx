@@ -214,6 +214,10 @@
 					}
 				},
 				
+				"angle": {
+					"name": "Angle"
+				},
+				
 				"zeroLast": {
 					"name": "Zero Last"
 				},

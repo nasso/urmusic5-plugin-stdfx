@@ -31,6 +31,7 @@ import io.gitlab.nasso.urmusic.common.RGBA32;
 import io.gitlab.nasso.urmusic.model.UrmusicModel;
 import io.gitlab.nasso.urmusic.model.project.VideoEffect;
 import io.gitlab.nasso.urmusic.model.project.VideoEffectArgs;
+import io.gitlab.nasso.urmusic.model.project.param.AngleParam;
 import io.gitlab.nasso.urmusic.model.project.param.BooleanParam;
 import io.gitlab.nasso.urmusic.model.project.param.FloatParam;
 import io.gitlab.nasso.urmusic.model.project.param.IntParam;
@@ -47,6 +48,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 	private static final String PNAME_mode = "mode";
 	private static final String PNAME_faceMode = "faceMode";
 	private static final String PNAME_lineCaps = "lineCaps";
+	private static final String PNAME_angle = "angle";
 	private static final String PNAME_zeroLast = "zeroLast";
 	private static final String PNAME_polar = "polar";
 	private static final String PNAME_count = "count";
@@ -71,6 +73,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 		private int mode;
 		private int faceMode;
 		private int lineCaps;
+		private float angle;
 		private boolean zeroLast;
 		private boolean polar;
 		private int count;
@@ -111,6 +114,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.addParameter(new OptionParam(PNAME_mode, 1, "outline", "lines", "fill", "dots"));
 			this.addParameter(new OptionParam(PNAME_faceMode, 2, "faceA", "faceB", "both", "alternate"));
 			this.addParameter(new OptionParam(PNAME_lineCaps, 0, "butt", "round", "square"));
+			this.addParameter(new AngleParam(PNAME_angle));
 			this.addParameter(new BooleanParam(PNAME_zeroLast, BoolValue.TRUE));
 			this.addParameter(new BooleanParam(PNAME_polar, BoolValue.FALSE));
 			this.addParameter(new IntParam(PNAME_count, 128, 1, 1, Integer.MAX_VALUE));
@@ -207,10 +211,12 @@ public class AudioSpectrumVFX extends VideoEffect {
 			float dx = this.endPoint.x() - this.startPoint.x();
 			float dy = this.endPoint.y() - this.startPoint.y();
 			float distInv = (float) (1.0 / Math.sqrt(dx * dx + dy * dy));
-			float expandX = (dy) * distInv * this.height;
-			float expandY = (-dx) * distInv * this.height;
-			float minExpandX = (dy) * distInv * this.minHeight;
-			float minExpandY = (-dx) * distInv * this.minHeight;
+			float cosang = MathUtils.cosf(-this.angle);
+			float sinang = MathUtils.sinf(-this.angle);
+			float expandX = (cosang * dy + sinang * dx) * distInv * this.height;
+			float expandY = (sinang * dy - cosang * dx) * distInv * this.height;
+			float minExpandX = (cosang * dy + sinang * dx) * distInv * this.minHeight;
+			float minExpandY = (sinang * dy - cosang * dx) * distInv * this.minHeight;
 			
 			this.vg.beginPath();
 			
@@ -246,10 +252,12 @@ public class AudioSpectrumVFX extends VideoEffect {
 			float dx = this.endPoint.x() - this.startPoint.x();
 			float dy = this.endPoint.y() - this.startPoint.y();
 			float distInv = (float) (1.0 / Math.sqrt(dx * dx + dy * dy));
-			float expandX = (dy) * distInv * this.height;
-			float expandY = (-dx) * distInv * this.height;
-			float minExpandX = (dy) * distInv * this.minHeight;
-			float minExpandY = (-dx) * distInv * this.minHeight;
+			float cosang = MathUtils.cosf(-this.angle);
+			float sinang = MathUtils.sinf(-this.angle);
+			float expandX = (cosang * dy + sinang * dx) * distInv * this.height;
+			float expandY = (sinang * dy - cosang * dx) * distInv * this.height;
+			float minExpandX = (cosang * dy + sinang * dx) * distInv * this.minHeight;
+			float minExpandY = (sinang * dy - cosang * dx) * distInv * this.minHeight;
 			
 			boolean faceA = true;
 			boolean faceB = false;
@@ -257,8 +265,10 @@ public class AudioSpectrumVFX extends VideoEffect {
 			switch(this.faceMode) {
 				case 0: // faceA
 					faceA = true;
+					faceB = false;
 					break;
 				case 1: // faceB
+					faceA = false;
 					faceB = true;
 					break;
 				case 2: // both
@@ -327,19 +337,23 @@ public class AudioSpectrumVFX extends VideoEffect {
 			float dx = this.endPoint.x() - this.startPoint.x();
 			float dy = this.endPoint.y() - this.startPoint.y();
 			float distInv = (float) (1.0 / Math.sqrt(dx * dx + dy * dy));
-			float expandX = (dy) * distInv * this.height;
-			float expandY = (-dx) * distInv * this.height;
-			float minExpandX = (dy) * distInv * this.minHeight;
-			float minExpandY = (-dx) * distInv * this.minHeight;
+			float cosang = MathUtils.cosf(-this.angle);
+			float sinang = MathUtils.sinf(-this.angle);
+			float expandX = (cosang * dy + sinang * dx) * distInv * this.height;
+			float expandY = (sinang * dy - cosang * dx) * distInv * this.height;
+			float minExpandX = (cosang * dy + sinang * dx) * distInv * this.minHeight;
+			float minExpandY = (sinang * dy - cosang * dx) * distInv * this.minHeight;
 			
 			boolean faceA = true;
 			boolean faceB = false;
-			
+
 			switch(this.faceMode) {
 				case 0: // faceA
 					faceA = true;
+					faceB = false;
 					break;
 				case 1: // faceB
+					faceA = false;
 					faceB = true;
 					break;
 				case 2: // both
@@ -393,6 +407,7 @@ public class AudioSpectrumVFX extends VideoEffect {
 			this.mode = ((int) args.parameters.get(PNAME_mode));
 			this.faceMode = ((int) args.parameters.get(PNAME_faceMode));
 			this.lineCaps = ((int) args.parameters.get(PNAME_lineCaps));
+			this.angle = (float) Math.toRadians((float) args.parameters.get(PNAME_angle));
 			this.zeroLast = args.parameters.get(PNAME_zeroLast) == BoolValue.TRUE;
 			this.polar = args.parameters.get(PNAME_polar) == BoolValue.TRUE;
 			this.count = ((int) args.parameters.get(PNAME_count));
