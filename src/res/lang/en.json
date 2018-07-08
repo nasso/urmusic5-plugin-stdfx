@@ -181,21 +181,8 @@
 		"audio_spectrum": {
 			"name": "Audio Spectrum",
 			"param": {
-				"blendingMode": {
-					"name": "Blending Mode",
-					"option": {
-						"srcOver": "Source Over",
-						"dstOver": "Destination Over",
-						"srcIn": "Source In",
-						"dstIn": "Destination In",
-						"srcOut": "Source Out",
-						"dstOut": "Destination Out",
-						"srcAtop": "Source Atop",
-						"dstAtop": "Destination Atop",
-						"copy": "Copy",
-						"add": "Add",
-						"xor": "XOR"
-					}
+				"color": {
+					"name": "Color"
 				},
 				
 				"mode": {
@@ -208,10 +195,6 @@
 					}
 				},
 				
-				"color": {
-					"name": "Color"
-				},
-				
 				"faceMode": {
 					"name": "Face Mode",
 					"option": {
@@ -222,12 +205,29 @@
 					}
 				},
 				
+				"lineCaps": {
+					"name": "Line Caps",
+					"option": {
+						"butt": "Butt",
+						"round": "Round",
+						"square": "Square"
+					}
+				},
+				
 				"zeroLast": {
 					"name": "Zero Last"
 				},
 				
 				"polar": {
 					"name": "Polar"
+				},
+				
+				"count": {
+					"name": "Count"
+				},
+				
+				"size": {
+					"name": "Size"
 				},
 				
 				"startPoint": {
@@ -262,33 +262,33 @@
 					"name": "Max Frequency"
 				},
 				
-				"height": {
-					"name": "Height"
-				},
-				
 				"minHeight": {
 					"name": "Min Height"
+				},
+				
+				"height": {
+					"name": "Height"
 				},
 				
 				"exponent": {
 					"name": "Exponent"
 				},
 				
-				"lineCaps": {
-					"name": "Line Caps",
+				"blendingMode": {
+					"name": "Blending Mode",
 					"option": {
-						"butt": "Butt",
-						"round": "Round",
-						"square": "Square"
+						"srcOver": "Source Over",
+						"dstOver": "Destination Over",
+						"srcIn": "Source In",
+						"dstIn": "Destination In",
+						"srcOut": "Source Out",
+						"dstOut": "Destination Out",
+						"srcAtop": "Source Atop",
+						"dstAtop": "Destination Atop",
+						"copy": "Copy",
+						"add": "Add",
+						"xor": "XOR"
 					}
-				},
-				
-				"size": {
-					"name": "Size"
-				},
-				
-				"count": {
-					"name": "Count"
 				}
 			}
 		},
